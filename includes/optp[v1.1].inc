@@ -13,11 +13,12 @@ public OnPlayerSpawn(playerid)
 {
 	GetPlayerPos(playerid, AC_Position[0], AC_Position[1], AC_Position[2]);
 	#if defined pds_OnPlayerSpawn
-    	forward pds_OnPlayerSpawn(playerid), return true;
+		pds_OnPlayerSpawn(playerid);
 	#endif
+	return true;
 }
 
-#if defined _ALS_OnPlayerUpdate
+#if defined _ALS_OnPlayerSpawn
     #undef OnPlayerSpawn  
 #else
     #define _ALS_OnPlayerSpawn
@@ -50,12 +51,13 @@ public OnPlayerUpdate(playerid)
 		pLastPosTick[ playerid ] = gettime( ) + 2;
 	}
     #if defined pds_OnPlayerUpdate
-        pds_OnPlayerUpdate(playerid), return true;
+        pds_OnPlayerUpdate(playerid)
     #endif
+    return true;
 }
 
 #if defined _ALS_OnPlayerUpdate
-    #undef OnPlayerUpdate  
+    #undef OnPlayerUpdate
 #else
     #define _ALS_OnPlayerUpdate
 #endif
