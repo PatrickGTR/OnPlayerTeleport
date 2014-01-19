@@ -51,7 +51,7 @@ public OnPlayerUpdate(playerid)
 		pLastPosTick[ playerid ] = gettime( ) + 2;
 	}
     #if defined pds_OnPlayerUpdate
-        pds_OnPlayerUpdate(playerid)
+        pds_OnPlayerUpdate(playerid);
     #endif
     return true;
 }
@@ -83,11 +83,11 @@ stock pds_SetPlayerPos(playerid, Float:PosX, Float:PosY, Float:PosZ)
 
 #define SetPlayerPos pds_SetPlayerPos
 
-stock pds_SetPlayerPosFindZ(playerid, Float:PosX, Float:PosY, Float:PosZ) 
+stock pds_SetPlayerInterior(playerid, interiorid) 
 { 
 	GetPlayerPos(playerid, AC_Position[0], AC_Position[1], AC_Position[2]);
-    Bit_Set(AC_SafeTP, playerid, true);
-    return SetPlayerPosFindZ(playerid, PosX, PosY, PosZ);
+	Bit_Set(AC_SafeTP, playerid, true);
+	return SetPlayerInterior(playerid, interiorid);
 }
 
 #if defined _ALS_SetPlayerPosFindZ
@@ -102,8 +102,8 @@ stock pds_SetPlayerPosFindZ(playerid, Float:PosX, Float:PosY, Float:PosZ)
 stock pds_PutPlayerInVehicle(playerid, vehicleid, seatid) 
 { 
 	GetPlayerPos(playerid, AC_Position[0], AC_Position[1], AC_Position[2]);
-    Bit_Set(AC_SafeTP, playerid, true);
-    return PutPlayerInVehicle(playerid, vehicleid, seatid);
+    	Bit_Set(AC_SafeTP, playerid, true);
+    	return PutPlayerInVehicle(playerid, vehicleid, seatid);
 }
 
 #if defined _ALS_PutPlayerInVehicle
@@ -117,8 +117,8 @@ stock pds_PutPlayerInVehicle(playerid, vehicleid, seatid)
 stock pds_SetPlayerInterior(playerid, interiorid) 
 { 
 	GetPlayerPos(playerid, AC_Position[0], AC_Position[1], AC_Position[2]);
-    Bit_Set(AC_SafeTP, playerid, true);
-    return SetPlayerInterior(playerid, interiorid);
+    	Bit_Set(AC_SafeTP, playerid, true);
+    	return SetPlayerInterior(playerid, interiorid);
 }
 
 
@@ -134,8 +134,8 @@ static stock GetVehicleSpeed( vehicleid ) //records in KMH.
 {
     new
     	Float:VehiclePos[3],
-        VehicleVelocity
-  	;
+        VehicleVelocity;
+        
     GetVehicleVelocity( vehicleid, VehiclePos[0], VehiclePos[1], VehiclePos[2] );
     VehicleVelocity = floatround( floatsqroot( VehiclePos[0]*VehiclePos[0] + VehiclePos[1]*VehiclePos[1] + VehiclePos[2]*VehiclePos[2] ) * 180 );
     return VehicleVelocity;
