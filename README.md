@@ -6,8 +6,8 @@ This include is created for [San Andreas Multiplayer](www.samp.com) Community, t
 * [Y_Less](http://forum.sa-mp.com/member.php?u=29176): Hook Method 7 Tutorial and y_bit.
 
 ## Callback ##
-  public OnPlayerTeleport(playerid, Float:distance)
-  {
-     SendClientMessage(playerid, -1, "You have been banned for using Teleport Hacks!");
-     return Ban(playerid);
-  }
+    public OnPlayerTeleport(playerid, Float:distance)
+    {
+       SendClientMessage(playerid, -1, "You have been banned for using Teleport Hacks!");
+       return Ban(playerid);
+    }
