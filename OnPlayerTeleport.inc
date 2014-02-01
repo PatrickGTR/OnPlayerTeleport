@@ -7,7 +7,7 @@ static stock
 	BitArray:AC_SafeTP<MAX_PLAYERS>
 ;
 
-forward OnPlayerTeleport(playerid, distance);
+forward OnPlayerTeleport(playerid, Float:distance);
 
 public OnPlayerSpawn(playerid)
 {
