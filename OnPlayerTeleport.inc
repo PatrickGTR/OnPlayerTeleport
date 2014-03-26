@@ -2,20 +2,20 @@
 #include <YSI\y_bit>
 
 static stock
-	Float:AC_Position[3],
-	pLastPosTick[MAX_PLAYERS],
-	BitArray:AC_SafeTP<MAX_PLAYERS>
+    Float:AC_Position[3],
+    pLastPosTick[MAX_PLAYERS],
+    BitArray:AC_SafeTP<MAX_PLAYERS>
 ;
 
 forward OnPlayerTeleport(playerid, Float:distance);
 
 public OnPlayerSpawn(playerid)
 {
-	GetPlayerPos(playerid, AC_Position[0], AC_Position[1], AC_Position[2]);
-	#if defined pds_OnPlayerSpawn
-		pds_OnPlayerSpawn(playerid);
-	#endif
-	return true;
+    GetPlayerPos(playerid, AC_Position[0], AC_Position[1], AC_Position[2]);
+    #if defined pds_OnPlayerSpawn
+        pds_OnPlayerSpawn(playerid);
+    #endif
+    return true;
 }
 
 #if defined _ALS_OnPlayerSpawn
@@ -25,31 +25,31 @@ public OnPlayerSpawn(playerid)
 #endif
 
 #define OnPlayerSpawn pds_OnPlayerSpawn
-	
+    
 #if defined pds_OnPlayerSpawn
     forward pds_OnPlayerSpawn(playerid);
 #endif
 
 public OnPlayerUpdate(playerid)
-{	
-	if( gettime( ) - pLastPosTick[ playerid ] > 1) //updates the player location every 2 seconds.
-	{
-		//on-foot
-		if( !IsPlayerInRangeOfPoint(playerid, 50.0, AC_Position[ 0 ], AC_Position[ 1 ], AC_Position[ 2 ]) && !Bit_Get(AC_SafeTP, playerid) && !IsPlayerNPC(playerid) 
-		&& GetPlayerState(playerid) == PLAYER_STATE_ONFOOT)
-		{
-		    CallLocalFunction("OnPlayerTeleport", "if", playerid, GetPlayerDistanceFromPoint(playerid, AC_Position[ 0 ], AC_Position[ 1 ], AC_Position[ 2 ])); 
-		}
-		//on-vehicle
-		else if( !IsPlayerInRangeOfPoint(playerid, 300.0, AC_Position[ 0 ], AC_Position[ 1 ], AC_Position[ 2 ]) && !Bit_Get(AC_SafeTP, playerid) && !IsPlayerNPC(playerid) 
-		&& GetVehicleSpeed( GetPlayerVehicleID(playerid) ) <= 50 && GetPlayerState(playerid) == PLAYER_STATE_DRIVER || GetPlayerState(playerid) == PLAYER_STATE_PASSENGER)
-		{
-		    CallLocalFunction("OnPlayerTeleport", "if", playerid, GetPlayerDistanceFromPoint(playerid, AC_Position[ 0 ], AC_Position[ 1 ], AC_Position[ 2 ]));
-		}
-		GetPlayerPos(playerid, AC_Position[ 0 ], AC_Position[ 1 ], AC_Position[ 2 ]);
-		Bit_Set(AC_SafeTP, playerid, false);
-		pLastPosTick[ playerid ] = gettime( ) + 2;
-	}
+{   
+    if( gettime( ) - pLastPosTick[ playerid ] > 1) //updates the player location every 2 seconds.
+    {
+        //on-foot
+        if( !IsPlayerInRangeOfPoint(playerid, 50.0, AC_Position[ 0 ], AC_Position[ 1 ], AC_Position[ 2 ]) && !Bit_Get(AC_SafeTP, playerid) && !IsPlayerNPC(playerid) 
+        && GetPlayerState(playerid) == PLAYER_STATE_ONFOOT)
+        {
+            CallLocalFunction("OnPlayerTeleport", "if", playerid, GetPlayerDistanceFromPoint(playerid, AC_Position[ 0 ], AC_Position[ 1 ], AC_Position[ 2 ])); 
+        }
+        //on-vehicle
+        else if( !IsPlayerInRangeOfPoint(playerid, 300.0, AC_Position[ 0 ], AC_Position[ 1 ], AC_Position[ 2 ]) && !Bit_Get(AC_SafeTP, playerid) && !IsPlayerNPC(playerid) 
+        && GetVehicleSpeed( GetPlayerVehicleID(playerid) ) <= 50 && GetPlayerState(playerid) == PLAYER_STATE_DRIVER || GetPlayerState(playerid) == PLAYER_STATE_PASSENGER)
+        {
+            CallLocalFunction("OnPlayerTeleport", "if", playerid, GetPlayerDistanceFromPoint(playerid, AC_Position[ 0 ], AC_Position[ 1 ], AC_Position[ 2 ]));
+        }
+        GetPlayerPos(playerid, AC_Position[ 0 ], AC_Position[ 1 ], AC_Position[ 2 ]);
+        Bit_Set(AC_SafeTP, playerid, false);
+        pLastPosTick[ playerid ] = gettime( ) + 2;
+    }
     #if defined pds_OnPlayerUpdate
         pds_OnPlayerUpdate(playerid);
     #endif
@@ -63,31 +63,31 @@ public OnPlayerUpdate(playerid)
 #endif
 
 #define OnPlayerUpdate pds_OnPlayerUpdate
-	
+    
 #if defined pds_OnPlayerUpdate
     forward pds_OnPlayerUpdate(playerid);
 #endif
 
 stock pds_SetPlayerPos(playerid, Float:PosX, Float:PosY, Float:PosZ)
 {
-	GetPlayerPos(playerid, AC_Position[0], AC_Position[1], AC_Position[2]);
-	Bit_Set(AC_SafeTP, playerid, true);
-	return SetPlayerPos(playerid, PosX, PosY, PosZ);
+    GetPlayerPos(playerid, AC_Position[0], AC_Position[1], AC_Position[2]);
+    Bit_Set(AC_SafeTP, playerid, true);
+    return SetPlayerPos(playerid, PosX, PosY, PosZ);
 }
 
 #if defined _ALS_SetPlayerPos
-	#undef SetPlayerPos
+    #undef SetPlayerPos
 #else
-	#define _ALS_SetPlayerPos
+    #define _ALS_SetPlayerPos
 #endif
 
 #define SetPlayerPos pds_SetPlayerPos
 
-stock pds_SetPlayerInterior(playerid, interiorid) 
+stock pds_SetPlayerPosFindZ(playerid, interiorid) 
 { 
-	GetPlayerPos(playerid, AC_Position[0], AC_Position[1], AC_Position[2]);
-	Bit_Set(AC_SafeTP, playerid, true);
-	return SetPlayerInterior(playerid, interiorid);
+    GetPlayerPos(playerid, AC_Position[0], AC_Position[1], AC_Position[2]);
+    Bit_Set(AC_SafeTP, playerid, true);
+    return SetPlayerInterior(playerid, interiorid);
 }
 
 #if defined _ALS_SetPlayerPosFindZ
@@ -101,9 +101,9 @@ stock pds_SetPlayerInterior(playerid, interiorid)
 
 stock pds_PutPlayerInVehicle(playerid, vehicleid, seatid) 
 { 
-	GetPlayerPos(playerid, AC_Position[0], AC_Position[1], AC_Position[2]);
-    	Bit_Set(AC_SafeTP, playerid, true);
-    	return PutPlayerInVehicle(playerid, vehicleid, seatid);
+    GetPlayerPos(playerid, AC_Position[0], AC_Position[1], AC_Position[2]);
+    Bit_Set(AC_SafeTP, playerid, true);
+    return PutPlayerInVehicle(playerid, vehicleid, seatid);
 }
 
 #if defined _ALS_PutPlayerInVehicle
@@ -116,9 +116,9 @@ stock pds_PutPlayerInVehicle(playerid, vehicleid, seatid)
 
 stock pds_SetPlayerInterior(playerid, interiorid) 
 { 
-	GetPlayerPos(playerid, AC_Position[0], AC_Position[1], AC_Position[2]);
-    	Bit_Set(AC_SafeTP, playerid, true);
-    	return SetPlayerInterior(playerid, interiorid);
+    GetPlayerPos(playerid, AC_Position[0], AC_Position[1], AC_Position[2]);
+    Bit_Set(AC_SafeTP, playerid, true);
+    return SetPlayerInterior(playerid, interiorid);
 }
 
 
@@ -133,7 +133,7 @@ stock pds_SetPlayerInterior(playerid, interiorid)
 static stock GetVehicleSpeed( vehicleid ) //records in KMH.
 {
     new
-    	Float:VehiclePos[3],
+        Float:VehiclePos[3],
         VehicleVelocity;
         
     GetVehicleVelocity( vehicleid, VehiclePos[0], VehiclePos[1], VehiclePos[2] );
