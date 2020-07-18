@@ -33,7 +33,7 @@ public OnPlayerUpdate(playerid)
 	{
 		new Float:dist = GetPlayerDistanceFromPoint(playerid, AC_Position[playerid][0], AC_Position[playerid][1], AC_Position[playerid][2]);
 		//on-foot
-		if(dist > 50 && !AC_SafeTP[playerid] && GetPlayerState(playerid) == PLAYER_STATE_ONFOOT)
+		if(dist > 50 && !AC_SafeTP[playerid] && GetPlayerState(playerid) == PLAYER_STATE_ONFOOT && !IsPlayerFalling(playerid) && !IsPlayerParachuting(playerid))
 		{
 			CallLocalFunction("OnPlayerTeleport", "iffff", playerid, dist, AC_Position[playerid][0], AC_Position[playerid][1], AC_Position[playerid][2]);
 			pLastPosTick[playerid] = gettime()+1;
@@ -136,4 +136,32 @@ stock Float:GetVehicleSpeed(vehicleid)//Km/h
 	GetVehicleVelocity(vehicleid, SPos[0], SPos[1], SPos[2]);
 	speed = floatmul(floatsqroot(floatadd(floatadd(floatpower(SPos[0], 2), floatpower(SPos[1], 2)),  floatpower(SPos[2], 2))), 181.5);
 	return speed;
+}
+
+stock IsPlayerFalling(playerid)
+{
+	new animlib[32], animname[32];
+	GetAnimationName(GetPlayerAnimationIndex(playerid),animlib,32,animname,32);
+	if(IsSameStr(animlib, "PED"))
+	{
+	    if(IsSameStr(animname, "FALL_back") || IsSameStr(animname, "FALL_collapse") ||
+	    IsSameStr(animname, "FALL_fall") || IsSameStr(animname, "FALL_front") ||
+	    IsSameStr(animname, "FALL_glide")) return 1;
+	}
+	return 0;
+}
+
+stock IsPlayerParachuting(playerid)
+{
+	new animlib[32], animname[32];
+	GetAnimationName(GetPlayerAnimationIndex(playerid),animlib,32,animname,32);
+	if((IsSameStr(animlib, "PARACHUTE") || (IsSameStr(animlib, "PED") &&
+	IsSameStr(animname, "FALL_skyDive"))) && GetPlayerWeapon(playerid) == 46) return 1;
+	return 0;
+}
+
+stock IsSameStr(string[], compare[], bool:ignorecase=true, length=cellmax)
+{
+    if(!strcmp(string, compare,  ignorecase, length)) return 1;
+    return 0;
 }
