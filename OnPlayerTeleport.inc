@@ -1,11 +1,10 @@
 #include <a_samp>
-#include <YSI\y_bit>
 #include <foreach>
 
 static stock
 Float:AC_Position[MAX_PLAYERS][3],
 pLastPosTick[MAX_PLAYERS],
-BitArray:AC_SafeTP<MAX_PLAYERS>
+AC_SafeTP[MAX_PLAYERS]
 ;
 
 forward OnPlayerTeleport(playerid, Float:distance, Float:oldx, Float:oldy, Float:oldz);
@@ -34,14 +33,14 @@ public OnPlayerUpdate(playerid)
 	{
 		new Float:dist = GetPlayerDistanceFromPoint(playerid, AC_Position[playerid][0], AC_Position[playerid][1], AC_Position[playerid][2]);
 		//on-foot
-		if(dist > 50 && !Bit_Get(AC_SafeTP, playerid) && GetPlayerState(playerid) == PLAYER_STATE_ONFOOT)
+		if(dist > 50 && !AC_SafeTP[playerid] && GetPlayerState(playerid) == PLAYER_STATE_ONFOOT)
 		{
 			CallLocalFunction("OnPlayerTeleport", "iffff", playerid, dist, AC_Position[playerid][0], AC_Position[playerid][1], AC_Position[playerid][2]);
 			pLastPosTick[playerid] = gettime()+1;
 			return 1;
 		}
 		//on-vehicle
-		else if((GetPlayerState(playerid) == PLAYER_STATE_DRIVER || GetPlayerState(playerid) == PLAYER_STATE_PASSENGER) && !Bit_Get(AC_SafeTP, playerid))
+		else if((GetPlayerState(playerid) == PLAYER_STATE_DRIVER || GetPlayerState(playerid) == PLAYER_STATE_PASSENGER) && !AC_SafeTP[playerid])
 		{
 			new Float:speed = GetVehicleSpeed(GetPlayerVehicleID(playerid));
 			if((dist > 300 && speed <= 50) || (dist > 50 && speed <= 10))
@@ -52,7 +51,7 @@ public OnPlayerUpdate(playerid)
 			}
 		}
 		GetPlayerPos(playerid, AC_Position[playerid][0], AC_Position[playerid][1], AC_Position[playerid][2]);
-		Bit_Set(AC_SafeTP, playerid, false);
+		AC_SafeTP[playerid] = 0;
 		pLastPosTick[playerid] = gettime()+1;
 	}
 	#if defined pds_OnPlayerUpdate
@@ -72,7 +71,7 @@ forward pds_OnPlayerUpdate(playerid);
 
 stock pds_SetPlayerPos(playerid, Float:PosX, Float:PosY, Float:PosZ)
 {
-	if(AC_Position[playerid][0] != PosX && AC_Position[playerid][1] != PosY && AC_Position[playerid][2] != PosZ) Bit_Set(AC_SafeTP, playerid, true);
+	if(AC_Position[playerid][0] != PosX && AC_Position[playerid][1] != PosY && AC_Position[playerid][2] != PosZ) AC_SafeTP[playerid] = 1;
 	AC_Position[playerid][0] = PosX,AC_Position[playerid][1] = PosY,AC_Position[playerid][2] = PosZ;
 	return SetPlayerPos(playerid, PosX, PosY, PosZ);
 }
@@ -89,7 +88,7 @@ stock pds_SetVehiclePos(vehicleid, Float:PosX, Float:PosY, Float:PosZ)
 	{
 		if(IsPlayerInVehicle(i,vehicleid))
 		{
-			if(AC_Position[i][0] != PosX && AC_Position[i][1] != PosY && AC_Position[i][2] != PosZ) Bit_Set(AC_SafeTP, i, true);
+			if(AC_Position[i][0] != PosX && AC_Position[i][1] != PosY && AC_Position[i][2] != PosZ) AC_SafeTP[i] = 1;
 			AC_Position[i][0] = PosX,AC_Position[i][1] = PosY,AC_Position[i][2] = PosZ;
 		}
 	}
@@ -104,7 +103,7 @@ stock pds_SetVehiclePos(vehicleid, Float:PosX, Float:PosY, Float:PosZ)
 
 stock pds_SetPlayerPosFindZ(playerid, Float:PosX, Float:PosY, Float:PosZ) 
 {
-	if(AC_Position[playerid][0] != PosX && AC_Position[playerid][1] != PosY && AC_Position[playerid][2] != PosZ) Bit_Set(AC_SafeTP, playerid, true);
+	if(AC_Position[playerid][0] != PosX && AC_Position[playerid][1] != PosY && AC_Position[playerid][2] != PosZ) AC_SafeTP[playerid] = 1;
 	AC_Position[playerid][0] = PosX,AC_Position[playerid][1] = PosY,AC_Position[playerid][2] = PosZ;
 	return SetPlayerPosFindZ(playerid, PosX, PosY, PosZ);
 }
@@ -119,7 +118,7 @@ stock pds_PutPlayerInVehicle(playerid, vehicleid, seatid)
 {
 	new Float:pos[3];
 	GetVehiclePos(vehicleid, pos[0], pos[1], pos[2]);
-	if(AC_Position[playerid][0] != pos[0] && AC_Position[playerid][1] != pos[1] && AC_Position[playerid][2] != pos[2]) Bit_Set(AC_SafeTP, playerid, true);
+	if(AC_Position[playerid][0] != pos[0] && AC_Position[playerid][1] != pos[1] && AC_Position[playerid][2] != pos[2]) AC_SafeTP[playerid] = 1;
 	AC_Position[playerid][0] = pos[0],AC_Position[playerid][1] = pos[1],AC_Position[playerid][2] = pos[2];
 	return PutPlayerInVehicle(playerid, vehicleid, seatid);
 }
