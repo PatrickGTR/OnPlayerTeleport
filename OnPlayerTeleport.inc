@@ -30,25 +30,26 @@ forward pds_OnPlayerSpawn(playerid);
 
 public OnPlayerUpdate(playerid)
 {  
-	if((gettime( )-pLastPosTick[playerid]) > 0) //updates the player location every 1 second.
+	if((gettime()-pLastPosTick[playerid]) > 0 && !IsPlayerNPC(playerid)) //updates the player location every 1 second.
 	{
+		new Float:dist = GetPlayerDistanceFromPoint(playerid, AC_Position[playerid][0], AC_Position[playerid][1], AC_Position[playerid][2]);
 		//on-foot
-		if( !IsPlayerInRangeOfPoint(playerid, 50.0, AC_Position[playerid][0], AC_Position[playerid][1], AC_Position[playerid][2]) && !Bit_Get(AC_SafeTP, playerid) && !IsPlayerNPC(playerid) 
-		&& GetPlayerState(playerid) == PLAYER_STATE_ONFOOT)
+		if(dist > 50 && !Bit_Get(AC_SafeTP, playerid) && GetPlayerState(playerid) == PLAYER_STATE_ONFOOT)
 		{
-			new Float:dist = GetPlayerDistanceFromPoint(playerid, AC_Position[playerid][0], AC_Position[playerid][1], AC_Position[playerid][2]);
 			CallLocalFunction("OnPlayerTeleport", "iffff", playerid, dist, AC_Position[playerid][0], AC_Position[playerid][1], AC_Position[playerid][2]);
 			pLastPosTick[playerid] = gettime()+1;
 			return 1;
 		}
 		//on-vehicle
-		else if( !IsPlayerInRangeOfPoint(playerid, 300.0, AC_Position[playerid][0], AC_Position[playerid][1], AC_Position[playerid][2]) && !Bit_Get(AC_SafeTP, playerid) && !IsPlayerNPC(playerid) 
-		&& GetVehicleSpeed( GetPlayerVehicleID(playerid) ) <= 50 && GetPlayerState(playerid) == PLAYER_STATE_DRIVER || GetPlayerState(playerid) == PLAYER_STATE_PASSENGER)
+		else if((GetPlayerState(playerid) == PLAYER_STATE_DRIVER || GetPlayerState(playerid) == PLAYER_STATE_PASSENGER) && !Bit_Get(AC_SafeTP, playerid))
 		{
-			new Float:dist = GetPlayerDistanceFromPoint(playerid, AC_Position[playerid][0], AC_Position[playerid][1], AC_Position[playerid][2]);
-			CallLocalFunction("OnPlayerTeleport", "iffff", playerid, dist, AC_Position[playerid][0], AC_Position[playerid][1], AC_Position[playerid][2]);
-			pLastPosTick[playerid] = gettime()+1;
-			return 1;
+			new Float:speed = GetVehicleSpeed(GetPlayerVehicleID(playerid));
+			if((dist > 300 && speed <= 50) || (dist > 50 && speed <= 10))
+			{
+				CallLocalFunction("OnPlayerTeleport", "iffff", playerid, dist, AC_Position[playerid][0], AC_Position[playerid][1], AC_Position[playerid][2]);
+				pLastPosTick[playerid] = gettime()+1;
+				return 1;
+			}
 		}
 		GetPlayerPos(playerid, AC_Position[playerid][0], AC_Position[playerid][1], AC_Position[playerid][2]);
 		Bit_Set(AC_SafeTP, playerid, false);
