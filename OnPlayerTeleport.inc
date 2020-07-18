@@ -39,7 +39,9 @@ public OnPlayerUpdate(playerid)
         && GetPlayerState(playerid) == PLAYER_STATE_ONFOOT)
         {
             new Float:dist = GetPlayerDistanceFromPoint(playerid, AC_Position[0], AC_Position[1], AC_Position[2]);
-            CallLocalFunction("OnPlayerTeleport", "iffff", playerid, dist, AC_Position[0], AC_Position[1], AC_Position[2]); 
+            CallLocalFunction("OnPlayerTeleport", "iffff", playerid, dist, AC_Position[0], AC_Position[1], AC_Position[2]);
+            pLastPosTick[ playerid ] = gettime( ) + 2;
+            return 1;
         }
         //on-vehicle
         else if( !IsPlayerInRangeOfPoint(playerid, 300.0, AC_Position[0], AC_Position[1], AC_Position[2]) && !Bit_Get(AC_SafeTP, playerid) && !IsPlayerNPC(playerid) 
@@ -47,6 +49,8 @@ public OnPlayerUpdate(playerid)
         {
             new Float:dist = GetPlayerDistanceFromPoint(playerid, AC_Position[0], AC_Position[1], AC_Position[2]);
             CallLocalFunction("OnPlayerTeleport", "iffff", playerid, dist, AC_Position[0], AC_Position[1], AC_Position[2]);
+            pLastPosTick[ playerid ] = gettime( ) + 2;
+            return 1;
         }
         GetPlayerPos(playerid, AC_Position[0], AC_Position[1], AC_Position[2]);
         Bit_Set(AC_SafeTP, playerid, false);
