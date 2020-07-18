@@ -8,6 +8,7 @@ This include is created for [San Andreas Multiplayer](www.samp.com) Community, t
 * [PatrickGRT](https://github.com/PatrickGTR): Original code creator
 * [Walter-Correa](https://github.com/Walter-Correa): Improvments and fixes
 * [Pottus](https://github.com/Pottus): GetVehicleSpeed
+* [karimcambridge](https://github.com/karimcambridge): Foreach
 
 ## Callback ##
     public OnPlayerTeleport(playerid, Float:distance, Float:oldx, Float:oldy, Float:oldz)
