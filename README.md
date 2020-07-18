@@ -1,5 +1,5 @@
 ## Introduction ##
-This include is created for [San Andreas Multiplayer](www.samp.com) Community, this include detects a player who uses Teleport hacks, you can do what ever you want underneath OnPlayerTeleport callback, OnPlayerTeleport is called when the include detects a player who is using Teleport hacks.
+This include is created for [San Andreas Multiplayer](www.samp.com) Community and detects a player who uses teleport hacks. Maybe fly hack and airbreak can be detected.
 
 ## Requeriments ##
 * [Foreach](https://github.com/karimcambridge/samp-foreach/releases)
