@@ -4,7 +4,7 @@ This include is created for [San Andreas Multiplayer](www.samp.com) Community, t
 ## Credits ##
 * [PatrickGRT](https://github.com/PatrickGTR): Original code creator
 * [Walter-Correa](https://github.com/Walter-Correa): Improvments and fixes
-* [IpSBruno](http://forum.sa-mp.com/member.php?u=87608): Hook Method 7.
+* [Pottus](https://github.com/Pottus): GetVehicleSpeed
 
 ## Callback ##
     public OnPlayerTeleport(playerid, Float:distance, Float:oldx, Float:oldy, Float:oldz)
