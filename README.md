@@ -2,13 +2,15 @@
 This include is created for [San Andreas Multiplayer](www.samp.com) Community and detects a player who uses teleport hacks. Maybe fly hack and airbreak can be detected.
 
 ## Requeriments ##
-* [Foreach](https://github.com/karimcambridge/samp-foreach/releases)
+* [Foreach](https://github.com/karimcambridge/samp-foreach/releases) - Put the include file in pawno/include folder
+* [SAfull.hmap](http://www.mediafire.com/file/2b19ske1h8jd44f/SAfull.hmap) - Put the map file in scriptfiles folder
 
 ## Credits ##
 * [PatrickGRT](https://github.com/PatrickGTR): Original code creator
 * [Walter-Correa](https://github.com/Walter-Correa): Improvments and fixes
 * [Pottus](https://github.com/Pottus): GetVehicleSpeed
-* [karimcambridge](https://github.com/karimcambridge): Foreach
+* [karimcambridge](https://github.com/karimcambridge): Foreach include
+* [RyDeR](https://forum.sa-mp.com/showthread.php?t=273263): GetPointZPos
 
 ## Callback ##
     public OnPlayerTeleport(playerid, Float:distance, Float:oldx, Float:oldy, Float:oldz)
