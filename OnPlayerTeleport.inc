@@ -32,25 +32,27 @@ public OnPlayerUpdate(playerid)
 {
 	if((gettime()-pLastPosTick[playerid]) > 0 && !IsPlayerNPC(playerid)) //updates the player location every 1 second.
 	{
-		new Float:dist = GetPlayerDistanceFromPoint(playerid, AC_Position[playerid][0], AC_Position[playerid][1], AC_Position[playerid][2]);
-		//on-foot
-		if(dist > 50 && !AC_SafeTP[playerid] && GetPlayerState(playerid) == PLAYER_STATE_ONFOOT && !IsPlayerFalling(playerid) && !IsPlayerParachuting(playerid))
+		if(GetPlayerSurfingVehicleID(playerid) == INVALID_VEHICLE_ID && GetPlayerSurfingObjectID(playerid) == INVALID_OBJECT_ID && 
+		GetPlayerSpecialAction(playerid) != SPECIAL_ACTION_ENTER_VEHICLE && GetPlayerSpecialAction(playerid) != SPECIAL_ACTION_EXIT_VEHICLE)
 		{
-			Teleporting[playerid]++;
-			CallLocalFunction("OnPlayerTeleport", "iffff", playerid, dist, AC_Position[playerid][0], AC_Position[playerid][1], AC_Position[playerid][2]);
-			pLastPosTick[playerid] = gettime()+1;
-			return 1;
-		}
-		//on-vehicle
-		else if((GetPlayerState(playerid) == PLAYER_STATE_DRIVER || GetPlayerState(playerid) == PLAYER_STATE_PASSENGER) && !AC_SafeTP[playerid])
-		{
-			new Float:speed = GetVehicleSpeed(GetPlayerVehicleID(playerid));
-			if((dist > 300 && speed <= 50) || (dist > 50 && speed <= 10))
+			new Float:dist = GetPlayerDistanceFromPoint(playerid, AC_Position[playerid][0], AC_Position[playerid][1], AC_Position[playerid][2]);
+			if(dist > 50 && !AC_SafeTP[playerid] && GetPlayerState(playerid) == PLAYER_STATE_ONFOOT && !IsPlayerFalling(playerid) && !IsPlayerParachuting(playerid))
 			{
 				Teleporting[playerid]++;
 				CallLocalFunction("OnPlayerTeleport", "iffff", playerid, dist, AC_Position[playerid][0], AC_Position[playerid][1], AC_Position[playerid][2]);
 				pLastPosTick[playerid] = gettime()+1;
 				return 1;
+			}
+			else if((GetPlayerState(playerid) == PLAYER_STATE_DRIVER || GetPlayerState(playerid) == PLAYER_STATE_PASSENGER) && !AC_SafeTP[playerid])
+			{
+				new Float:speed = GetVehicleSpeed(GetPlayerVehicleID(playerid));
+				if((dist > 300 && speed <= 50) || (dist > 50 && speed <= 10))
+				{
+					Teleporting[playerid]++;
+					CallLocalFunction("OnPlayerTeleport", "iffff", playerid, dist, AC_Position[playerid][0], AC_Position[playerid][1], AC_Position[playerid][2]);
+					pLastPosTick[playerid] = gettime()+1;
+					return 1;
+				}
 			}
 		}
 		new Float:pos[4];
