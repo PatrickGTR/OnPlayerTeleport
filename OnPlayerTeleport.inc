@@ -28,7 +28,7 @@ forward pds_OnPlayerSpawn(playerid);
 #endif
 
 public OnPlayerUpdate(playerid)
-{  
+{
 	if((gettime()-pLastPosTick[playerid]) > 0 && !IsPlayerNPC(playerid)) //updates the player location every 1 second.
 	{
 		new Float:dist = GetPlayerDistanceFromPoint(playerid, AC_Position[playerid][0], AC_Position[playerid][1], AC_Position[playerid][2]);
@@ -50,7 +50,11 @@ public OnPlayerUpdate(playerid)
 				return 1;
 			}
 		}
-		GetPlayerPos(playerid, AC_Position[playerid][0], AC_Position[playerid][1], AC_Position[playerid][2]);
+		new Float:pos[4];
+		GetPlayerPos(playerid, pos[0], pos[1], pos[2]);
+		GetPointZPos(pos[0],pos[1],pos[3]);
+		if((pos[2]-pos[3]) <= -0.5)  AC_Position[playerid][0] = pos[0], AC_Position[playerid][1] = pos[1],AC_Position[playerid][2] = pos[3]+1.0;//If player is under surface
+		else {AC_Position[playerid][0] = pos[0], AC_Position[playerid][1] = pos[1],AC_Position[playerid][2] = pos[2];}
 		AC_SafeTP[playerid] = 0;
 		pLastPosTick[playerid] = gettime()+1;
 	}
@@ -129,16 +133,16 @@ stock pds_PutPlayerInVehicle(playerid, vehicleid, seatid)
 #endif
 #define PutPlayerInVehicle pds_PutPlayerInVehicle
 
-forward Float:GetVehicleSpeed(vehicleid);
-stock Float:GetVehicleSpeed(vehicleid)//Km/h
+forward Float:GetVehicleSpeed(vehicleid);//Pottus
+stock Float:GetVehicleSpeed(vehicleid)
 {
 	new Float:SPos[3],Float:speed;
 	GetVehicleVelocity(vehicleid, SPos[0], SPos[1], SPos[2]);
-	speed = floatmul(floatsqroot(floatadd(floatadd(floatpower(SPos[0], 2), floatpower(SPos[1], 2)),  floatpower(SPos[2], 2))), 181.5);
+	speed = floatmul(floatsqroot(floatadd(floatadd(floatpower(SPos[0], 2), floatpower(SPos[1], 2)),  floatpower(SPos[2], 2))), 181.5);//Km/h
 	return speed;
 }
 
-stock IsPlayerFalling(playerid)
+stock IsPlayerFalling(playerid)//Walter-Correa
 {
 	new animlib[32], animname[32];
 	GetAnimationName(GetPlayerAnimationIndex(playerid),animlib,32,animname,32);
@@ -151,7 +155,7 @@ stock IsPlayerFalling(playerid)
 	return 0;
 }
 
-stock IsPlayerParachuting(playerid)
+stock IsPlayerParachuting(playerid)//Walter-Correa
 {
 	new animlib[32], animname[32];
 	GetAnimationName(GetPlayerAnimationIndex(playerid),animlib,32,animname,32);
@@ -160,8 +164,33 @@ stock IsPlayerParachuting(playerid)
 	return 0;
 }
 
-stock IsSameStr(string[], compare[], bool:ignorecase=true, length=cellmax)
+stock IsSameStr(string[], compare[], bool:ignorecase=true, length=cellmax)//Walter-Correa
 {
     if(!strcmp(string, compare,  ignorecase, length)) return 1;
     return 0;
+}
+
+stock GetPointZPos(Float: point_X, Float: point_Y, &Float: point_Z)//RyDeR
+{
+	if(!(-3000.0 < point_X < 3000.0 || -3000.0 < point_Y < 3000.0))
+		return 0;
+
+	static
+		File: z_Map_File
+	;
+	if(!z_Map_File)
+	{
+		z_Map_File = fopen("SAfull.hmap", io_read);
+
+		if(!z_Map_File)
+			return 0;
+	}
+	new
+		z_Data[2 char]
+	;
+	fseek(z_Map_File, (-6000 * (floatround(point_Y, point_Y <= 0.0 ? floatround_ceil : floatround_floor) - 3000) + floatround(point_X, point_X <= 0.0 ? floatround_ceil : floatround_floor) + 3000) * 2);
+	fblockread(z_Map_File, z_Data, 2 char);
+
+	point_Z = (z_Data[1 / 2] & 0x0000FFFF) * 0.01;
+	return 1;
 }
