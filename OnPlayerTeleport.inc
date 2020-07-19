@@ -4,7 +4,8 @@
 static stock
 Float:AC_Position[MAX_PLAYERS][3],
 pLastPosTick[MAX_PLAYERS],
-AC_SafeTP[MAX_PLAYERS]
+AC_SafeTP[MAX_PLAYERS],
+Teleporting[MAX_PLAYERS]
 ;
 
 forward OnPlayerTeleport(playerid, Float:distance, Float:oldx, Float:oldy, Float:oldz);
@@ -35,6 +36,7 @@ public OnPlayerUpdate(playerid)
 		//on-foot
 		if(dist > 50 && !AC_SafeTP[playerid] && GetPlayerState(playerid) == PLAYER_STATE_ONFOOT && !IsPlayerFalling(playerid) && !IsPlayerParachuting(playerid))
 		{
+			Teleporting[playerid]++;
 			CallLocalFunction("OnPlayerTeleport", "iffff", playerid, dist, AC_Position[playerid][0], AC_Position[playerid][1], AC_Position[playerid][2]);
 			pLastPosTick[playerid] = gettime()+1;
 			return 1;
@@ -45,6 +47,7 @@ public OnPlayerUpdate(playerid)
 			new Float:speed = GetVehicleSpeed(GetPlayerVehicleID(playerid));
 			if((dist > 300 && speed <= 50) || (dist > 50 && speed <= 10))
 			{
+				Teleporting[playerid]++;
 				CallLocalFunction("OnPlayerTeleport", "iffff", playerid, dist, AC_Position[playerid][0], AC_Position[playerid][1], AC_Position[playerid][2]);
 				pLastPosTick[playerid] = gettime()+1;
 				return 1;
@@ -56,6 +59,7 @@ public OnPlayerUpdate(playerid)
 		if((pos[2]-pos[3]) <= -0.5)  AC_Position[playerid][0] = pos[0], AC_Position[playerid][1] = pos[1],AC_Position[playerid][2] = pos[3]+1.0;//If player is under surface
 		else {AC_Position[playerid][0] = pos[0], AC_Position[playerid][1] = pos[1],AC_Position[playerid][2] = pos[2];}
 		AC_SafeTP[playerid] = 0;
+		Teleporting[playerid] = 0;
 		pLastPosTick[playerid] = gettime()+1;
 	}
 	#if defined pds_OnPlayerUpdate
@@ -132,6 +136,11 @@ stock pds_PutPlayerInVehicle(playerid, vehicleid, seatid)
 #define _ALS_PutPlayerInVehicle
 #endif
 #define PutPlayerInVehicle pds_PutPlayerInVehicle
+
+stock IsPlayerTeleporting(playerid)//Walter-Correa
+{
+	return Teleporting[playerid];
+}
 
 forward Float:GetVehicleSpeed(vehicleid);//Pottus
 stock Float:GetVehicleSpeed(vehicleid)
