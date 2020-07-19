@@ -1,5 +1,5 @@
 ## Introduction ##
-This include is created for [San Andreas Multiplayer](www.samp.com) Community and detects a player who uses teleport hacks. Maybe fly hack and airbreak can be detected.
+This include is for detect players using teleport hacks. Maybe fly hack and airbreak can be detected.
 
 ## Requeriments ##
 * [Foreach](https://github.com/karimcambridge/samp-foreach/releases) - Put the include file in pawno/include folder
@@ -13,9 +13,11 @@ This include is created for [San Andreas Multiplayer](www.samp.com) Community an
 * [RyDeR](https://forum.sa-mp.com/showthread.php?t=273263): GetPointZPos
 
 ## Callback ##
+You can try reset to the old position or/and warn/kick/ban
+
     public OnPlayerTeleport(playerid, Float:distance, Float:oldx, Float:oldy, Float:oldz)
     {
-	    if(IsPlayerInAnyVehicle(playerid) && GetPlayerState(playerid) == PLAYER_STATE_DRIVER) SetVehiclePos(GetPlayerVehicleID(playerid), oldx, oldy, oldz);
-	    else SetPlayerPos(playerid, oldx, oldy, oldz);
-	    return 1;
+    	if(IsPlayerInAnyVehicle(playerid) && GetPlayerState(playerid) == PLAYER_STATE_DRIVER) SetVehiclePos(GetPlayerVehicleID(playerid), oldx, oldy, oldz);
+    	else SetPlayerPos(playerid, oldx, oldy, oldz);
+    	return 1;
     }
