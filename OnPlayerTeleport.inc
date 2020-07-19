@@ -18,15 +18,6 @@ public OnPlayerSpawn(playerid)
 	#endif
 	return true;
 }
-#if defined _ALS_OnPlayerSpawn
-#undef OnPlayerSpawn  
-#else
-#define _ALS_OnPlayerSpawn
-#endif
-#define OnPlayerSpawn pds_OnPlayerSpawn    
-#if defined pds_OnPlayerSpawn
-forward pds_OnPlayerSpawn(playerid);
-#endif
 
 public OnPlayerUpdate(playerid)
 {
@@ -36,7 +27,7 @@ public OnPlayerUpdate(playerid)
 		GetPlayerSpecialAction(playerid) != SPECIAL_ACTION_ENTER_VEHICLE && GetPlayerSpecialAction(playerid) != SPECIAL_ACTION_EXIT_VEHICLE)
 		{
 			new Float:dist = GetPlayerDistanceFromPoint(playerid, AC_Position[playerid][0], AC_Position[playerid][1], AC_Position[playerid][2]);
-			if(dist > 50 && !AC_SafeTP[playerid] && GetPlayerState(playerid) == PLAYER_STATE_ONFOOT && !IsPlayerFalling(playerid) && !IsPlayerParachuting(playerid))
+			if(dist > 75 && !AC_SafeTP[playerid] && GetPlayerState(playerid) == PLAYER_STATE_ONFOOT && !IsPlayerFalling(playerid) && !IsPlayerParachuting(playerid))
 			{
 				Teleporting[playerid]++;
 				CallLocalFunction("OnPlayerTeleport", "iffff", playerid, dist, AC_Position[playerid][0], AC_Position[playerid][1], AC_Position[playerid][2]);
@@ -46,7 +37,7 @@ public OnPlayerUpdate(playerid)
 			else if((GetPlayerState(playerid) == PLAYER_STATE_DRIVER || GetPlayerState(playerid) == PLAYER_STATE_PASSENGER) && !AC_SafeTP[playerid])
 			{
 				new Float:speed = GetVehicleSpeed(GetPlayerVehicleID(playerid));
-				if((dist > 300 && speed <= 50) || (dist > 50 && speed <= 10))
+				if((dist > 300 && speed <= 50) || (dist > 75 && speed <= 10))
 				{
 					Teleporting[playerid]++;
 					CallLocalFunction("OnPlayerTeleport", "iffff", playerid, dist, AC_Position[playerid][0], AC_Position[playerid][1], AC_Position[playerid][2]);
@@ -69,15 +60,6 @@ public OnPlayerUpdate(playerid)
 	#endif
 	return true;
 }
-#if defined _ALS_OnPlayerUpdate
-#undef OnPlayerUpdate
-#else
-#define _ALS_OnPlayerUpdate
-#endif
-#define OnPlayerUpdate pds_OnPlayerUpdate  
-#if defined pds_OnPlayerUpdate
-forward pds_OnPlayerUpdate(playerid);
-#endif
 
 stock pds_SetPlayerPos(playerid, Float:PosX, Float:PosY, Float:PosZ)
 {
@@ -85,12 +67,6 @@ stock pds_SetPlayerPos(playerid, Float:PosX, Float:PosY, Float:PosZ)
 	AC_Position[playerid][0] = PosX,AC_Position[playerid][1] = PosY,AC_Position[playerid][2] = PosZ;
 	return SetPlayerPos(playerid, PosX, PosY, PosZ);
 }
-#if defined _ALS_SetPlayerPos
-#undef SetPlayerPos
-#else
-#define _ALS_SetPlayerPos
-#endif
-#define SetPlayerPos pds_SetPlayerPos
 
 stock pds_SetVehiclePos(vehicleid, Float:PosX, Float:PosY, Float:PosZ)
 {   
@@ -104,12 +80,6 @@ stock pds_SetVehiclePos(vehicleid, Float:PosX, Float:PosY, Float:PosZ)
 	}
 	return SetVehiclePos(vehicleid, PosX, PosY, PosZ);
 }
-#if defined _ALS_SetVehiclePos
-#undef SetVehiclePos
-#else
-#define _ALS_SetVehiclePos
-#endif
-#define SetVehiclePos pds_SetVehiclePos
 
 stock pds_SetPlayerPosFindZ(playerid, Float:PosX, Float:PosY, Float:PosZ) 
 {
@@ -117,12 +87,6 @@ stock pds_SetPlayerPosFindZ(playerid, Float:PosX, Float:PosY, Float:PosZ)
 	AC_Position[playerid][0] = PosX,AC_Position[playerid][1] = PosY,AC_Position[playerid][2] = PosZ;
 	return SetPlayerPosFindZ(playerid, PosX, PosY, PosZ);
 }
-#if defined _ALS_SetPlayerPosFindZ
-#undef SetPlayerPosFindZ  
-#else
-#define _ALS_SetPlayerPosFindZ
-#endif
-#define SetPlayerPosFindZ pds_SetPlayerPosFindZ
 
 stock pds_PutPlayerInVehicle(playerid, vehicleid, seatid) 
 {
@@ -132,12 +96,6 @@ stock pds_PutPlayerInVehicle(playerid, vehicleid, seatid)
 	AC_Position[playerid][0] = pos[0],AC_Position[playerid][1] = pos[1],AC_Position[playerid][2] = pos[2];
 	return PutPlayerInVehicle(playerid, vehicleid, seatid);
 }
-#if defined _ALS_PutPlayerInVehicle
-#undef PutPlayerInVehicle  
-#else
-#define _ALS_PutPlayerInVehicle
-#endif
-#define PutPlayerInVehicle pds_PutPlayerInVehicle
 
 stock IsPlayerTeleporting(playerid)//Walter-Correa
 {
@@ -155,6 +113,7 @@ stock Float:GetVehicleSpeed(vehicleid)
 
 stock IsPlayerFalling(playerid)//Walter-Correa
 {
+	if(IsPlayerInAnyVehicle(playerid)) return 0;
 	new animlib[32], animname[32];
 	GetAnimationName(GetPlayerAnimationIndex(playerid),animlib,32,animname,32);
 	if(IsSameStr(animlib, "PED"))
@@ -168,6 +127,7 @@ stock IsPlayerFalling(playerid)//Walter-Correa
 
 stock IsPlayerParachuting(playerid)//Walter-Correa
 {
+	if(IsPlayerInAnyVehicle(playerid)) return 0;
 	new animlib[32], animname[32];
 	GetAnimationName(GetPlayerAnimationIndex(playerid),animlib,32,animname,32);
 	if((IsSameStr(animlib, "PARACHUTE") || (IsSameStr(animlib, "PED") &&
@@ -183,25 +143,65 @@ stock IsSameStr(string[], compare[], bool:ignorecase=true, length=cellmax)//Walt
 
 stock GetPointZPos(Float: point_X, Float: point_Y, &Float: point_Z)//RyDeR
 {
-	if(!(-3000.0 < point_X < 3000.0 || -3000.0 < point_Y < 3000.0))
-		return 0;
-
-	static
-		File: z_Map_File
-	;
+	if(!(-3000.0 < point_X < 3000.0 || -3000.0 < point_Y < 3000.0)) return 0;
+	static File: z_Map_File;
 	if(!z_Map_File)
 	{
 		z_Map_File = fopen("SAfull.hmap", io_read);
-
-		if(!z_Map_File)
-			return 0;
+		if(!z_Map_File) return 0;
 	}
-	new
-		z_Data[2 char]
-	;
-	fseek(z_Map_File, (-6000 * (floatround(point_Y, point_Y <= 0.0 ? floatround_ceil : floatround_floor) - 3000) + floatround(point_X, point_X <= 0.0 ? floatround_ceil : floatround_floor) + 3000) * 2);
+	new z_Data[2 char];
+	fseek(z_Map_File, (-6000 * (floatround(point_Y, point_Y <= 0.0 ? floatround_ceil : floatround_floor) - 3000) + 
+	floatround(point_X, point_X <= 0.0 ? floatround_ceil : floatround_floor) + 3000) * 2);
 	fblockread(z_Map_File, z_Data, 2 char);
-
 	point_Z = (z_Data[1 / 2] & 0x0000FFFF) * 0.01;
 	return 1;
 }
+
+#if defined _ALS_OnPlayerSpawn
+#undef OnPlayerSpawn  
+#else
+#define _ALS_OnPlayerSpawn
+#endif
+#define OnPlayerSpawn pds_OnPlayerSpawn    
+#if defined pds_OnPlayerSpawn
+forward pds_OnPlayerSpawn(playerid);
+#endif
+
+#if defined _ALS_OnPlayerUpdate
+#undef OnPlayerUpdate
+#else
+#define _ALS_OnPlayerUpdate
+#endif
+#define OnPlayerUpdate pds_OnPlayerUpdate  
+#if defined pds_OnPlayerUpdate
+forward pds_OnPlayerUpdate(playerid);
+#endif
+
+#if defined _ALS_SetPlayerPos
+#undef SetPlayerPos
+#else
+#define _ALS_SetPlayerPos
+#endif
+#define SetPlayerPos pds_SetPlayerPos
+
+#if defined _ALS_SetVehiclePos
+#undef SetVehiclePos
+#else
+#define _ALS_SetVehiclePos
+#endif
+#define SetVehiclePos pds_SetVehiclePos
+
+#if defined _ALS_SetPlayerPosFindZ
+#undef SetPlayerPosFindZ  
+#else
+#define _ALS_SetPlayerPosFindZ
+#endif
+#define SetPlayerPosFindZ pds_SetPlayerPosFindZ
+
+#if defined _ALS_PutPlayerInVehicle
+#undef PutPlayerInVehicle  
+#else
+#define _ALS_PutPlayerInVehicle
+#endif
+#define PutPlayerInVehicle pds_PutPlayerInVehicle
