@@ -13,6 +13,10 @@ This include is for detect players using teleport hacks. Maybe fly hack and airb
 * [RyDeR](https://forum.sa-mp.com/showthread.php?t=273263): GetPointZPos
 
 ## Callback ##
+You can check is player still in hacked position and how many seconds
+
+    IsPlayerTeleporting(playerid)
+    
 You can try reset to the old position or/and warn/kick/ban
 
     public OnPlayerTeleport(playerid, Float:distance, Float:oldx, Float:oldy, Float:oldz)
