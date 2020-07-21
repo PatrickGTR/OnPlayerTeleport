@@ -12,6 +12,8 @@ forward OnPlayerTeleport(playerid, Float:distance, Float:oldx, Float:oldy, Float
 
 public OnPlayerSpawn(playerid)
 {
+	pLastPosTick[playerid] = gettime()+1;
+	AC_SafeTP[playerid] = 1;
 	GetPlayerPos(playerid, AC_Position[playerid][0], AC_Position[playerid][1], AC_Position[playerid][2]);
 	#if defined pds_OnPlayerSpawn
 	pds_OnPlayerSpawn(playerid);
