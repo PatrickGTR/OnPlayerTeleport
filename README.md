@@ -1,13 +1,27 @@
 ## Introduction ##
-This include is created for [San Andreas Multiplayer](www.samp.com) Community, this include detects a player who uses Teleport hacks, you can do what ever you want underneath OnPlayerTeleport callback, OnPlayerTeleport is called when the include detects a player who is using Fly hacks.
+This include is for detect players using teleport hacks. Maybe fly hack and airbreak can be detected.
+
+## Requeriments ##
+* [Foreach](https://github.com/karimcambridge/samp-foreach/releases) - Put the include file in pawno/include folder
+* [SAfull.hmap](http://www.mediafire.com/file/2b19ske1h8jd44f/SAfull.hmap) - Put the map file in scriptfiles folder
 
 ## Credits ##
-* [IpSBruno](http://forum.sa-mp.com/member.php?u=87608): Hook Method 7.
-* [Y_Less](http://forum.sa-mp.com/member.php?u=29176): Hook Method 7 Tutorial and y_bit.
+* [PatrickGRT](https://github.com/PatrickGTR): Original code creator
+* [Walter-Correa](https://github.com/Walter-Correa): Improvments and fixes
+* [Pottus](https://github.com/Pottus): GetVehicleSpeed
+* [karimcambridge](https://github.com/karimcambridge): Foreach include
+* [RyDeR](https://forum.sa-mp.com/showthread.php?t=273263): GetPointZPos
 
 ## Callback ##
-    public OnPlayerTeleport(playerid, Float:distance)
+You can check is player still in hacked position and how many seconds
+
+    IsPlayerTeleporting(playerid)
+    
+You can try reset to the old position or/and warn/kick/ban
+
+    public OnPlayerTeleport(playerid, Float:distance, Float:oldx, Float:oldy, Float:oldz)
     {
-       SendClientMessage(playerid, -1, "You have been banned for using Teleport Hacks!");
-       return Ban(playerid);
+    	if(IsPlayerInAnyVehicle(playerid) && GetPlayerState(playerid) == PLAYER_STATE_DRIVER) SetVehiclePos(GetPlayerVehicleID(playerid), oldx, oldy, oldz);
+    	else SetPlayerPos(playerid, oldx, oldy, oldz);
+    	return 1;
     }
